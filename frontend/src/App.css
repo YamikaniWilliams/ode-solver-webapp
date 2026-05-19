@@ -1,0 +1,276 @@
+/* App.css */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #f2f2f2;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* MAIN APP */
+.app {
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* NAVBAR */
+.navbar{
+  position:fixed;
+
+  top:0;
+  left:0;
+
+  width:100%;
+  height:85px;
+
+  background:white;
+
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  padding:0 50px;
+
+  z-index:1000;
+
+  box-shadow:0 2px 10px rgba(0,0,0,0.06);
+}
+
+/* LOGO */
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration:none;
+}
+
+.logo-box {
+  background: #111111;
+  color: white;
+
+  padding: 6px 12px;
+
+  border-radius: 8px;
+
+  font-weight: 700;
+  font-size: 22px;
+}
+
+.logo-text {
+  font-size: 42px;
+  font-weight: 600;
+  color: #111111;
+}
+
+/* NAV LINKS */
+.nav-links {
+  display: flex;
+  gap: 60px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: #4a4a4a;
+
+  font-size: 22px;
+  font-weight: 500;
+
+  transition: 0.3s;
+}
+
+.nav-links a:hover {
+  color: #2f5d95;
+}
+
+/* THEME ICON */
+.theme-toggle {
+  font-size: 40px;
+  cursor: pointer;
+}
+
+/* HERO */
+.hero {
+  margin-top:85px;
+  width: 100%;
+  min-height: calc(100vh - 85px);
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 60px 80px;
+
+  gap: 40px;
+}
+
+/* LEFT SIDE */
+.hero-left {
+  flex: 1;
+}
+
+.hero-title {
+  font-size: 96px;
+  line-height: 1.05;
+  font-weight: 800;
+  color: #111111;
+}
+
+.hero-title span {
+  color: #2f5d95;
+}
+
+.hero-title sup {
+  font-size: 36px;
+}
+
+/* DESCRIPTION */
+.hero-description {
+  margin-top: 35px;
+
+  font-size: 30px;
+  line-height: 1.5;
+
+  color: #7a7a7a;
+
+  max-width: 780px;
+}
+
+/* BUTTON */
+.launch-btn {
+  margin-top: 50px;
+
+  background: #2f5d95;
+  color: white;
+
+  border: none;
+  border-radius: 14px;
+
+  padding: 22px 42px;
+
+  font-size: 28px;
+  font-weight: 500;
+
+  cursor: pointer;
+
+  transition: 0.3s;
+}
+
+.launch-btn:hover {
+  background: #234976;
+  transform: translateY(-2px);
+}
+
+/* RIGHT SIDE */
+.hero-right {
+  flex: 1;
+
+  display: flex;
+  justify-content: center;
+}
+
+/* GRAPH WRAPPER */
+.graph-wrapper{
+  position:relative;
+
+  width:100%;
+  height:100%;
+
+  overflow:hidden;
+
+  border-radius:18px;
+
+  transition:0.5s;
+}
+
+/* GRAPH TITLE */
+.graph-title{
+  position:absolute;
+
+  top:18px;
+  left:20px;
+
+  background:rgba(0,0,0,0.65);
+
+  color:white;
+
+  padding:10px 18px;
+
+  border-radius:30px;
+
+  font-size:18px;
+  font-weight:500;
+
+  z-index:10;
+
+  backdrop-filter:blur(8px);
+}
+
+/* GRAPH IMAGE */
+.graph-image{
+  width:100%;
+  height:100%;
+
+  object-fit:contain;
+
+  animation: swipeFade 1s ease;
+
+  transition:
+    transform 0.7s ease,
+    filter 0.7s ease,
+    box-shadow 0.7s ease;
+}
+
+/* AUTO ZOOM EFFECT */
+.graph-wrapper:hover .graph-image{
+
+  transform:scale(1.03);
+
+  filter:brightness(1.05);
+
+  box-shadow:
+    0 0 25px rgba(47,93,149,0.35);
+
+}
+
+/* GLOWING CARD */
+.graph-card{
+  position:relative;
+
+  overflow:hidden;
+
+  transition:0.5s;
+}
+
+.graph-card:hover{
+
+  box-shadow:
+    0 0 35px rgba(47,93,149,0.25);
+
+}
+
+/* SWIPE ANIMATION */
+@keyframes swipeFade{
+
+  from{
+    opacity:0;
+
+    transform:
+      translateX(40px)
+      scale(0.96);
+  }
+
+  to{
+    opacity:1;
+
+    transform:
+      translateX(0px)
+      scale(1);
+  }
+
+}
