@@ -1,5 +1,6 @@
 import React from "react";
 import "./SolverPage.css";
+import Footer from "../components/Footer";
 import { Link } from "react-router-dom";
 
 function SolverPage() {
@@ -201,7 +202,7 @@ function SolverPage() {
         </div>
 
       </div>
-
+      <Footer />
     </div>
   );
 }

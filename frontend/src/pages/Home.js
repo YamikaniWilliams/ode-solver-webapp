@@ -1,5 +1,6 @@
 // App.js
 import React, { useEffect, useState } from "react";
+import Footer from "../components/Footer";
 import { useNavigate } from "react-router-dom";
 import "../App.css";
 import { Link } from "react-router-dom";
@@ -130,6 +131,8 @@ function Home() {
         </div>
 
       </section>
+      
+      <Footer />
 
     </div>
   );
