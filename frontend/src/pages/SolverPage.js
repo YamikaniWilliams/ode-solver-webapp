@@ -1,9 +1,56 @@
-import React from "react";
+import React, { useState } from "react";
 import "./SolverPage.css";
 import Footer from "../components/Footer";
 import { Link } from "react-router-dom";
 
 function SolverPage() {
+
+  const [equation, setEquation] = useState("");
+  const [solution, setSolution] = useState("");
+  const [loading, setLoading] = useState(false);
+
+
+  const solveODE = async () => {
+
+  if (!equation) {
+    alert("Please enter an equation");
+    return;
+  }
+
+  try {
+
+    setLoading(true);
+
+    const response = await fetch(
+      "http://localhost:5000/api/solve",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          equation: equation,
+        }),
+      }
+    );
+
+    const data = await response.json();
+
+    setSolution(data.solution);
+
+  } catch (error) {
+
+    console.error(error);
+
+    setSolution("Error solving equation");
+
+  } finally {
+
+    setLoading(false);
+
+  }
+};
+
   return (
     <div className="solver-page">
 
@@ -71,7 +118,9 @@ function SolverPage() {
               <label>Equation:</label>
               <input
                 type="text"
-                placeholder="y'' = x - y"
+                placeholder="y'' - y"
+                value={equation}
+                onChange={(e) => setEquation(e.target.value)}
               />
             </div>
 
@@ -87,7 +136,7 @@ function SolverPage() {
               </div>
 
               <div className="input-group">
-                <label>Final x (xᶠ):</label>
+                <label>Final x (xf):</label>
                 <input
                   type="text"
                   placeholder="2.5"
@@ -149,11 +198,20 @@ function SolverPage() {
             {/* BUTTONS */}
             <div className="button-row">
 
-              <button className="compute-btn">
+              <button
+                className="compute-btn"
+                onClick={solveODE}
+                >
                 Compute Solution
               </button>
 
-              <button className="clear-btn">
+              <button
+                className="clear-btn"
+                onClick={() => {
+                  setEquation("");
+                  setSolution("");
+                }}
+                >
                 Clear
               </button>
 
@@ -193,7 +251,11 @@ function SolverPage() {
             {/* TABLE AREA */}
             <div className="table-placeholder">
 
-              Table of Numerical Solutions
+               {loading ? (
+                <p>Computing...</p>
+              ) : (
+                <pre>{solution}</pre>
+               )}
 
             </div>
 
