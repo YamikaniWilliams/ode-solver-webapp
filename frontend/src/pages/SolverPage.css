@@ -151,14 +151,20 @@ body{
 
 /* PANEL TOP */
 .panel-top,
-.solution-header{
-  padding:22px 25px;
+.solution-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
-  border-bottom:1px solid #ececec;
+  padding: 20px;
+  min-height: 80px;
 
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+  border-bottom: 1px solid #e5e7eb;
+
+  position: relative;
+  z-index: 10;
+
+  background: white;
 }
 
 .panel-top h3,
@@ -296,12 +302,10 @@ body{
 }
 
 /* SOLUTION CONTENT */
-.solution-content{
-  padding:25px;
-
-  display:flex;
-  flex-direction:column;
-  gap:20px;
+.solution-content {
+  padding: 20px;
+  position: relative;
+  z-index: 1;
 }
 
 /* GRAPH AREA */
@@ -319,23 +323,23 @@ body{
   color:#9aa0aa;
 
   font-size:20px;
+
+  margin-bottom: 20px;
 }
 
 /* TABLE AREA */
-.table-placeholder{
-  height:260px;
+.table-placeholder {
+  max-height: none;
+  overflow: visible;
 
-  border:2px dashed #d9dde6;
+  margin-top: 25px;
 
-  border-radius:22px;
+  padding-top: 10px;
 
-  display:flex;
-  justify-content:center;
-  align-items:center;
+  border-top: 1px solid #e5e7eb;
 
-  color:#9aa0aa;
-
-  font-size:20px;
+  display: flex;
+  justify-content: center;
 }
 
 /* RESPONSIVE */

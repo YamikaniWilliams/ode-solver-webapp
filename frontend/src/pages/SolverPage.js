@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./SolverPage.css";
 import Footer from "../components/Footer";
 import { Link } from "react-router-dom";
+import Plot from "react-plotly.js";
 
 function SolverPage() {
   const [order, setOrder] = useState(2);
@@ -21,7 +22,7 @@ function SolverPage() {
     "",
   ]);
 
-  const [solution, setSolution] = useState("");
+  const [solution, setSolution] = useState(null);
 
   const [loading, setLoading] = useState(false);
 
@@ -63,14 +64,29 @@ function SolverPage() {
         }
       );
 
-      const data = await response.json();
+      if (!response.ok) {
 
-      setSolution(JSON.stringify(data, null, 2));
+        const errorText =
+          await response.text();
+
+        throw new Error(errorText);
+
+      }
+
+      const data =
+        await response.json();
+
+      setSolution(data);
     } catch (error) {
-      console.error(error);
 
-      setSolution("Error connecting to backend");
-    } finally {
+        console.error("FULL ERROR:", error);
+
+        alert(error.message);
+
+        setSolution(null);
+
+      }
+     finally {
       setLoading(false);
     }
   };
@@ -296,6 +312,10 @@ function SolverPage() {
                   Runge-Kutta 4 (RK4)
                 </option>
 
+                <option value="ALL">
+                  All Methods
+                </option>
+
               </select>
 
             </div>
@@ -315,7 +335,7 @@ function SolverPage() {
                 onClick={() => {
 
                   setEquation("");
-                  setSolution("");
+                  setSolution(null);
 
                   setMethod("");
 
@@ -366,17 +386,288 @@ function SolverPage() {
             {/* GRAPH */}
             <div className="graph-placeholder">
 
-              Graph Will Display Here
+              {solution && solution.x ? (
+
+                <>
+
+                  <Plot
+                    data={
+                      solution.euler
+
+                        ? [
+
+                            {
+                              x: solution.x,
+                              y: solution.euler,
+                              type: "scatter",
+                              mode: "lines",
+                              name: "Euler"
+                            },
+
+                            {
+                              x: solution.x,
+                              y: solution.heun,
+                              type: "scatter",
+                              mode: "lines",
+                              name: "Heun"
+                            },
+
+                            {
+                              x: solution.x,
+                              y: solution.rk4,
+                              type: "scatter",
+                              mode: "lines",
+                              name: "RK4"
+                            }
+
+                          ]
+
+                        : [
+
+                            {
+                              x: solution.x,
+                              y: solution.y,
+                              type: "scatter",
+                              mode: "lines",
+                              name: method
+                            }
+
+                          ]
+                    }
+                    layout={{
+                      title: {
+                        text: `${method} Solution of y${"'".repeat(order)} = ${equation}`
+                      },
+
+                      xaxis: {
+                        title: {
+                          text: "Independent Variable (x)"
+                        }
+                      },
+
+                      yaxis: {
+                        title: {
+                          text: "Solution y(x)"
+                        }
+                      }
+                    }}
+                    style={{
+                      width: "100%",
+                      height: "450px"
+                    }}
+                    useResizeHandler={true}
+                  />
+
+                </>
+
+              ) : (
+
+                <p>Graph Will Display Here</p>
+
+              )}
 
             </div>
 
             {/* RESULTS */}
-            <div className="table-placeholder">
+            <div
+              className="table-placeholder"
+              style={{
+                overflowY: "visible",
+                maxHeight: "none"
+              }}
+            >
 
               {loading ? (
+
                 <p>Computing...</p>
+
+              ) : solution && solution.x ? (
+
+                <table
+                  style={{
+                    width: "100%",
+                    textAlign: "center",
+                    borderCollapse: "collapse"
+                  }}
+                >
+
+                  <thead
+                    style={{
+                      position: "sticky",
+                      top: 0,
+                      background: "#f5f5f5",
+                      zIndex: 5
+                    }}
+                  >
+
+                    {solution && solution.euler ? (
+
+                      <tr>
+
+                        <th
+                          style={{
+                            borderBottom: "2px solid #ccc",
+                            padding: "10px",
+                            textAlign: "center"
+                          }}
+                        >
+                          X Value
+                        </th>
+
+                        <th
+                          style={{
+                            borderBottom: "2px solid #ccc",
+                            padding: "10px",
+                            textAlign: "center"
+                          }}
+                        >
+                          Euler Y
+                        </th>
+
+                        <th
+                          style={{
+                            borderBottom: "2px solid #ccc",
+                            padding: "10px",
+                            textAlign: "center"
+                          }}
+                        >
+                          Heun Y
+                        </th>
+
+                        <th
+                          style={{
+                            borderBottom: "2px solid #ccc",
+                            padding: "10px",
+                            textAlign: "center"
+                          }}
+                        >
+                          RK4 Y
+                        </th>
+
+                      </tr>
+
+                    ) : (
+
+                      <tr>
+
+                        <th
+                          style={{
+                            borderBottom: "2px solid #ccc",
+                            padding: "10px"
+                          }}
+                        >
+                          X Value
+                        </th>
+
+                        <th
+                          style={{
+                            borderBottom: "2px solid #ccc",
+                            padding: "10px"
+                          }}
+                        >
+                          Y Value
+                        </th>
+
+                      </tr>
+
+                    )}
+
+                  </thead>
+
+                  <tbody>
+
+                    {solution.euler ? (
+
+                      solution.x.map((xValue, index) => (
+
+                        <tr key={index}>
+
+                          <td
+                            style={{
+                              textAlign: "center",
+                              padding: "8px"
+                            }}
+                          >
+                            {Number(xValue).toFixed(4)}
+                          </td>
+
+                          <td
+                            style={{
+                              textAlign: "center",
+                              padding: "8px"
+                            }}
+                          >
+                            {Number(solution.euler[index]).toFixed(6)}
+                          </td>
+
+                          <td
+                            style={{
+                              textAlign: "center",
+                              padding: "8px"
+                            }}
+                          >
+                            {Number(solution.heun[index]).toFixed(6)}
+                          </td>
+
+                          <td
+                            style={{
+                              textAlign: "center",
+                              padding: "8px"
+                            }}
+                          >
+                            {Number(solution.rk4[index]).toFixed(6)}
+                          </td>
+
+                        </tr>
+
+                      ))
+
+                    ) : (
+
+                      solution.x.map((xValue, index) => (
+
+                        <tr key={index}>
+
+                          <td
+                            style={{
+                              textAlign: "center",
+                              padding: "8px"
+                            }}
+                          >
+                            {Number(xValue).toFixed(4)}
+                          </td>
+
+                          <td
+                            style={{
+                              textAlign: "center",
+                              padding: "8px"
+                            }}
+                          >
+                            {Number(solution.y[index]).toFixed(6)}
+                          </td>
+
+                        </tr>
+
+                      ))
+
+                    )}
+
+                  </tbody>
+
+                </table>
+
               ) : (
-                <pre>{solution}</pre>
+
+                <p
+                  style={{
+                    color: "#9aa0aa",
+                    fontSize: "20px",
+                    textAlign: "center"
+                  }}
+                >
+                  No solution computed yet.
+                </p>
+
               )}
 
             </div>
