@@ -4,52 +4,76 @@ import Footer from "../components/Footer";
 import { Link } from "react-router-dom";
 
 function SolverPage() {
+  const [order, setOrder] = useState(2);
 
   const [equation, setEquation] = useState("");
+
+  const [x0, setX0] = useState(0);
+
+  const [xf, setXf] = useState(10);
+
+  const [stepSize, setStepSize] = useState(0.1);
+
+  const [method, setMethod] = useState("");
+
+  const [initialConditions, setInitialConditions] = useState([
+    "",
+    "",
+  ]);
+
   const [solution, setSolution] = useState("");
+
   const [loading, setLoading] = useState(false);
 
-
   const solveODE = async () => {
+    if (!equation) {
+      alert("Please enter the equation");
+      return;
+    }
 
-  if (!equation) {
-    alert("Please enter an equation");
-    return;
-  }
+    if (!method) {
+      alert("Please select a numerical method");
+      return;
+    }
 
-  try {
+    if (Number(xf) <= Number(x0)) {
+      alert("Final x must be greater than Initial x");
+      return;
+    }
 
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    const response = await fetch(
-      "http://localhost:5000/api/solve",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          equation: equation,
-        }),
-      }
-    );
+      const response = await fetch(
+        "http://localhost:5000/api/solve",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            order,
+            equation,
+            x0,
+            xf,
+            stepSize,
+            initialConditions,
+            method,
+          }),
+        }
+      );
 
-    const data = await response.json();
+      const data = await response.json();
 
-    setSolution(data.solution);
+      setSolution(JSON.stringify(data, null, 2));
+    } catch (error) {
+      console.error(error);
 
-  } catch (error) {
-
-    console.error(error);
-
-    setSolution("Error solving equation");
-
-  } finally {
-
-    setLoading(false);
-
-  }
-};
+      setSolution("Error connecting to backend");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="solver-page">
@@ -58,15 +82,13 @@ function SolverPage() {
       <nav className="navbar">
 
         <Link to="/" className="logo-section">
+          <div className="logo-box">
+            ODE
+          </div>
 
-        <div className="logo-box">
-          ODE
-        </div>
-
-        <h2 className="logo-text">
-          Solver
-        </h2>
-
+          <h2 className="logo-text">
+            Solver
+          </h2>
         </Link>
 
         <div className="nav-links">
@@ -100,95 +122,178 @@ function SolverPage() {
         {/* LEFT PANEL */}
         <div className="left-panel">
 
-          {/* PANEL TOP */}
           <div className="panel-top">
             <div>
               <h3>System Parameters</h3>
+
               <p>
                 Differential Equation: y(n) = f(x, y, y', ...)
               </p>
             </div>
           </div>
 
-          {/* PANEL CONTENT */}
           <div className="panel-content">
+
+            {/* ORDER */}
+            <div className="input-group">
+
+              <label>Order (n):</label>
+
+              <input
+                type="number"
+                min="1"
+                value={order}
+                onChange={(e) => {
+                  const n = parseInt(e.target.value) || 1;
+
+                  setOrder(n);
+
+                  setInitialConditions(
+                    Array(n).fill("")
+                  );
+                }}
+              />
+
+            </div>
 
             {/* EQUATION */}
             <div className="input-group full-width">
-              <label>Equation:</label>
+
+              <label>
+                Highest Derivative Function
+              </label>
+
               <input
                 type="text"
-                placeholder="y'' - y"
+                placeholder="-y"
                 value={equation}
-                onChange={(e) => setEquation(e.target.value)}
+                onChange={(e) =>
+                  setEquation(e.target.value)
+                }
               />
+
             </div>
 
             {/* ROW 1 */}
             <div className="row">
 
               <div className="input-group">
-                <label>Initial x (x₀):</label>
+
+                <label>
+                  Initial x (x₀)
+                </label>
+
                 <input
-                  type="text"
-                  placeholder="1"
+                  type="number"
+                  value={x0}
+                  onChange={(e) =>
+                    setX0(e.target.value)
+                  }
                 />
+
               </div>
 
               <div className="input-group">
-                <label>Final x (xf):</label>
+
+                <label>
+                  Final x (xf)
+                </label>
+
                 <input
-                  type="text"
-                  placeholder="2.5"
+                  type="number"
+                  value={xf}
+                  onChange={(e) =>
+                    setXf(e.target.value)
+                  }
                 />
+
               </div>
 
             </div>
 
-            {/* ROW 2 */}
-            <div className="row">
+            {/* INITIAL CONDITIONS */}
+            <div className="input-group full-width">
 
-              <div className="input-group">
-                <label>Initial y (y₀):</label>
-                <input
-                  type="text"
-                  placeholder="1"
-                />
-              </div>
+              <label>
+                Initial Conditions
+              </label>
 
-              <div className="input-group">
-                <label>Step Size (h):</label>
-                <input
-                  type="text"
-                  placeholder="0.5"
-                />
-              </div>
+              {initialConditions.map(
+                (value, index) => (
+
+                  <input
+                    key={index}
+                    type="number"
+                    value={value}
+                    placeholder={
+                      index === 0
+                        ? "y(0)"
+                        : `y${"'".repeat(index)}(0)`
+                    }
+                    onChange={(e) => {
+                      const updated = [
+                        ...initialConditions,
+                      ];
+
+                      updated[index] =
+                        e.target.value;
+
+                      setInitialConditions(
+                        updated
+                      );
+                    }}
+                    style={{
+                      marginBottom: "10px",
+                    }}
+                  />
+
+                )
+              )}
 
             </div>
 
-            {/* METHOD SELECT */}
+            {/* STEP SIZE */}
             <div className="input-group">
 
-              <select>
+              <label>
+                Step Size (h)
+              </label>
 
-                <option>
+              <input
+                type="number"
+                step="0.01"
+                value={stepSize}
+                onChange={(e) =>
+                  setStepSize(e.target.value)
+                }
+              />
+
+            </div>
+
+            {/* METHOD */}
+            <div className="input-group">
+
+              <select
+                value={method}
+                onChange={(e) =>
+                  setMethod(e.target.value)
+                }
+              >
+
+                <option value="" disabled>
                   Select Method
                 </option>
 
-                <option>
+                <option value="Euler">
                   Euler Method
                 </option>
 
-                <option>
-                  Improved Euler
+                <option value="Heun">
+                  Improved Euler (Heun)
                 </option>
 
-                <option>
-                  Runge-Kutta (RK4)
-                </option>
-
-                <option>
-                  All Methods
+                <option value="RK4">
+                  Runge-Kutta 4 (RK4)
                 </option>
 
               </select>
@@ -201,17 +306,29 @@ function SolverPage() {
               <button
                 className="compute-btn"
                 onClick={solveODE}
-                >
+              >
                 Compute Solution
               </button>
 
               <button
                 className="clear-btn"
                 onClick={() => {
+
                   setEquation("");
                   setSolution("");
+
+                  setMethod("");
+
+                  setX0(0);
+                  setXf(10);
+                  setStepSize(0.1);
+
+                  setInitialConditions(
+                    Array(order).fill("")
+                  );
+
                 }}
-                >
+              >
                 Clear
               </button>
 
@@ -224,12 +341,18 @@ function SolverPage() {
         {/* RIGHT PANEL */}
         <div className="right-panel">
 
-          {/* SOLUTION HEADER */}
           <div className="solution-header">
 
             <div>
-              <h3>Solution</h3>
-              <p>Solution Computed</p>
+
+              <h3>
+                Solution
+              </h3>
+
+              <p>
+                Solution Computed
+              </p>
+
             </div>
 
             <button className="download-btn">
@@ -238,24 +361,23 @@ function SolverPage() {
 
           </div>
 
-          {/* SOLUTION CONTENT */}
           <div className="solution-content">
 
-            {/* GRAPH AREA */}
+            {/* GRAPH */}
             <div className="graph-placeholder">
 
               Graph Will Display Here
 
             </div>
 
-            {/* TABLE AREA */}
+            {/* RESULTS */}
             <div className="table-placeholder">
 
-               {loading ? (
+              {loading ? (
                 <p>Computing...</p>
               ) : (
                 <pre>{solution}</pre>
-               )}
+              )}
 
             </div>
 
@@ -264,7 +386,9 @@ function SolverPage() {
         </div>
 
       </div>
+
       <Footer />
+
     </div>
   );
 }
