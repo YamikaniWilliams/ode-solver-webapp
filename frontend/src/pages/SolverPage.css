@@ -321,19 +321,95 @@ body{
   margin-bottom: 20px;
 }
 
-/* TABLE AREA */
-.table-placeholder {
-  max-height: none;
-  overflow: visible;
+.loading-placeholder{
 
-  margin-top: 25px;
+  height:300px;
 
-  padding-top: 10px;
+  display:flex;
 
-  border-top: 1px solid #e5e7eb;
+  justify-content:center;
 
-  display: flex;
-  justify-content: center;
+  align-items:center;
+
+  color:#9aa0aa;
+
+  font-size:20px;
+
+  border:2px dashed #d9dde6;
+
+  border-radius:22px;
+
+}
+/* =========================
+   SOLUTION TABLE
+========================= */
+
+.solution-table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:15px;
+}
+
+/* HEADER */
+.solution-table thead th{
+
+  background:#2f5d95;
+
+  color:white;
+
+  padding:14px;
+
+  font-size:16px;
+
+  font-weight:500;
+
+  text-align:center;
+
+  border-bottom:2px solid #234976;
+}
+
+/* TABLE CELLS */
+.solution-table td{
+
+  padding:12px;
+
+  text-align:center;
+
+  border-bottom:1px solid #e5e7eb;
+}
+
+/* ALTERNATING ROWS */
+.solution-table tbody tr:nth-child(even){
+
+  background:#f8fafc;
+
+}
+
+/* HOVER EFFECT */
+.solution-table tbody tr:hover{
+
+  background:#eef4ff;
+
+}
+
+.equation-preview{
+
+  margin-top:15px;
+
+  padding:15px;
+
+  background:#f8fafc;
+
+  border:1px solid #e2e8f0;
+
+  border-radius:12px;
+
+  font-size:22px;
+
+  text-align:center;
+
+  color:#1e293b;
+
 }
 
 /* RESPONSIVE */
@@ -348,6 +424,8 @@ body{
   }
 
 }
+
+
 
 @media screen and (max-width:768px){
 
@@ -387,5 +465,7 @@ body{
     width:100%;
     height:60px;
   }
+
+
 
 }

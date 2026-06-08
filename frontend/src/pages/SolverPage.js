@@ -1,14 +1,20 @@
-import React, { useState } from "react";
+import React, {
+  useState,
+  useEffect
+} from "react";
 import "./SolverPage.css";
 import Footer from "../components/Footer";
 import { Link } from "react-router-dom";
 import Plot from "react-plotly.js";
 import * as XLSX from "xlsx";
+import { InlineMath } from "react-katex";
+import "katex/dist/katex.min.css";
 
 function SolverPage() {
   const [order, setOrder] = useState(1);
 
   const [equation, setEquation] = useState("");
+  const [equationFocused, setEquationFocused] = useState(false);
 
   const [x0, setX0] = useState("");
   const [xf, setXf] = useState("");
@@ -18,11 +24,38 @@ function SolverPage() {
 
   const [initialConditions, setInitialConditions] = useState([
   "1",
-]);
+  ]);
 
   const [solution, setSolution] = useState(null);
 
   const [loading, setLoading] = useState(false);
+  const [loadingText, setLoadingText] =
+    useState("Computing.");
+
+  useEffect(() => {
+
+    if (!loading) return;
+
+    let dots = 1;
+
+    const interval = setInterval(() => {
+
+      dots++;
+
+      if (dots > 3) {
+        dots = 1;
+      }
+
+      setLoadingText(
+        "Computing" + ".".repeat(dots)
+      );
+
+    }, 500);
+
+    return () => clearInterval(interval);
+
+  }, [loading]);
+
 
   const solveODE = async () => {
 
@@ -256,12 +289,33 @@ function SolverPage() {
 
               <input
                 type="text"
-                placeholder="-y"
+                placeholder="y'-5xy"
                 value={equation}
                 onChange={(e) =>
                   setEquation(e.target.value)
                 }
+                onFocus={() =>
+                  setEquationFocused(true)
+                }
+                onBlur={() =>
+                  setEquationFocused(false)
+                }
               />
+
+
+              {
+                equationFocused && equation && (
+
+                  <div className="equation-preview">
+
+                    <InlineMath
+                      math={`y${"'".repeat(order)}=${equation}`}
+                    />
+
+                  </div>
+
+                )
+              }
 
             </div>
 
@@ -451,7 +505,11 @@ function SolverPage() {
               </h3>
 
               <p>
-                Solution Computed
+                {loading
+                  ? "Computing..."
+                  : solution
+                    ? "Solution Computed"
+                    : "No solution computed yet"}
               </p>
 
             </div>
@@ -581,69 +639,32 @@ function SolverPage() {
             >
 
               {loading ? (
+                <div className="loading-placeholder">
+                  {loadingText}
+                </div>
+              )  : solution && solution.x ? (
 
-                <p>Computing...</p>
+                <table className="solution-table">
 
-              ) : solution && solution.x ? (
-
-                <table
-                  style={{
-                    width: "100%",
-                    textAlign: "center",
-                    borderCollapse: "collapse"
-                  }}
-                >
-
-                  <thead
-                    style={{
-                      position: "sticky",
-                      top: 0,
-                      background: "#f5f5f5",
-                      zIndex: 5
-                    }}
-                  >
+                  <thead>
 
                     {solution && solution.euler ? (
 
                       <tr>
 
-                        <th
-                          style={{
-                            borderBottom: "2px solid #ccc",
-                            padding: "10px",
-                            textAlign: "center"
-                          }}
-                        >
+                        <th>
                           X Value
                         </th>
 
-                        <th
-                          style={{
-                            borderBottom: "2px solid #ccc",
-                            padding: "10px",
-                            textAlign: "center"
-                          }}
-                        >
+                        <th>
                           Euler Y
                         </th>
 
-                        <th
-                          style={{
-                            borderBottom: "2px solid #ccc",
-                            padding: "10px",
-                            textAlign: "center"
-                          }}
-                        >
+                        <th>
                           Heun Y
                         </th>
 
-                        <th
-                          style={{
-                            borderBottom: "2px solid #ccc",
-                            padding: "10px",
-                            textAlign: "center"
-                          }}
-                        >
+                        <th>
                           RK4 Y
                         </th>
 
@@ -653,21 +674,11 @@ function SolverPage() {
 
                       <tr>
 
-                        <th
-                          style={{
-                            borderBottom: "2px solid #ccc",
-                            padding: "10px"
-                          }}
-                        >
+                        <th>
                           X Value
                         </th>
 
-                        <th
-                          style={{
-                            borderBottom: "2px solid #ccc",
-                            padding: "10px"
-                          }}
-                        >
+                        <th>
                           Y Value
                         </th>
 
@@ -685,39 +696,19 @@ function SolverPage() {
 
                         <tr key={index}>
 
-                          <td
-                            style={{
-                              textAlign: "center",
-                              padding: "8px"
-                            }}
-                          >
+                          <td>
                             {Number(xValue).toFixed(4)}
                           </td>
 
-                          <td
-                            style={{
-                              textAlign: "center",
-                              padding: "8px"
-                            }}
-                          >
+                          <td>
                             {Number(solution.euler[index]).toFixed(6)}
                           </td>
 
-                          <td
-                            style={{
-                              textAlign: "center",
-                              padding: "8px"
-                            }}
-                          >
+                          <td>
                             {Number(solution.heun[index]).toFixed(6)}
                           </td>
 
-                          <td
-                            style={{
-                              textAlign: "center",
-                              padding: "8px"
-                            }}
-                          >
+                          <td>
                             {Number(solution.rk4[index]).toFixed(6)}
                           </td>
 
