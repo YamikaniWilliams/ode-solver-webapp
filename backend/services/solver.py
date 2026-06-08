@@ -1,6 +1,5 @@
 import sys
 import json
-import traceback
 
 from parser import build_function
 
@@ -14,13 +13,33 @@ try:
     # Read JSON from Node.js
     # -----------------------------
 
-    raw_input = sys.stdin.read()
-
-    payload = json.loads(raw_input)
+    payload = json.loads(
+        sys.stdin.read()
+    )
 
     order = int(payload["order"])
 
-    equation = payload["equation"]
+    equation = payload["equation"].strip()
+
+    if payload["x0"] == "":
+        raise Exception(
+            "Please enter Initial x (x₀)."
+        )
+
+    if payload["xf"] == "":
+        raise Exception(
+            "Please enter Final x (xf)."
+        )
+
+    if payload["stepSize"] == "":
+        raise Exception(
+            "Please enter Step Size (h)."
+        )
+
+    if payload["method"] == "":
+        raise Exception(
+            "Please select a numerical method."
+        )
 
     x0 = float(payload["x0"])
 
@@ -30,29 +49,78 @@ try:
 
     method = payload["method"]
 
+    # -----------------------------
+# Validate Initial Conditions
+# -----------------------------
+
+    for i, value in enumerate(
+        payload["initialConditions"]
+    ):
+
+        if str(value).strip() == "":
+
+            if i == 0:
+
+                raise Exception(
+                    "Please enter y(0)."
+                )
+
+            else:
+
+                derivative = "'" * i
+
+                raise Exception(
+                    f"Please enter y{derivative}(0)."
+                )
+
     initial_conditions = [
         float(v)
         for v in payload["initialConditions"]
     ]
 
     # -----------------------------
-    # Validation
+    # Detect highest derivative
     # -----------------------------
 
-    if len(initial_conditions) != order:
+    highest_derivative = 0
+
+    if "y''''" in equation:
+        highest_derivative = 4
+
+    elif "y'''" in equation:
+        highest_derivative = 3
+
+    elif "y''" in equation:
+        highest_derivative = 2
+
+    elif "y'" in equation:
+        highest_derivative = 1
+
+    if highest_derivative > order:
+
+        derivative_name = (
+            "y" + ("'" * highest_derivative)
+        )
+
         raise Exception(
-            f"Expected {order} initial conditions but received {len(initial_conditions)}"
+            f"You selected Order = {order}, "
+            f"but the equation contains "
+            f"{derivative_name}. "
+            f"Increase the order to at least "
+            f"{highest_derivative}."
         )
 
     # -----------------------------
     # Build RHS Function
     # -----------------------------
 
-    rhs = build_function(equation)
+    rhs = build_function(
+        equation
+    )
 
     # -----------------------------
     # Convert nth-order ODE
-    # to first-order system
+    # into first-order system
     # -----------------------------
 
     def F(x, u):
@@ -60,7 +128,10 @@ try:
         result = []
 
         for i in range(order - 1):
-            result.append(u[i + 1])
+
+            result.append(
+                u[i + 1]
+            )
 
         result.append(
             rhs(x, u)
@@ -76,7 +147,9 @@ try:
 
         def solve_with(step_function):
 
-            u = initial_conditions.copy()
+            u = (
+                initial_conditions.copy()
+            )
 
             y_values = []
 
@@ -140,9 +213,12 @@ try:
 
     else:
 
-        u = initial_conditions.copy()
+        u = (
+            initial_conditions.copy()
+        )
 
         x_values = []
+
         y_values = []
 
         x = x0
@@ -201,10 +277,10 @@ try:
             )
         )
 
-except Exception:
+except Exception as e:
 
     print(
-        traceback.format_exc(),
+        str(e),
         file=sys.stderr
     )
 

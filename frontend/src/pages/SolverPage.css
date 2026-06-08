@@ -87,12 +87,6 @@ body{
   color:#2f5d95;
 }
 
-/* MOON ICON */
-.theme-toggle{
-  font-size:35px;
-  cursor:pointer;
-}
-
 /* HEADER */
 .solver-header{
   margin-top:85px;
@@ -125,7 +119,7 @@ body{
 
 /* LEFT PANEL */
 .left-panel{
-  flex:1;
+  flex:0.75;
 
   background:white;
 
@@ -138,7 +132,7 @@ body{
 
 /* RIGHT PANEL */
 .right-panel{
-  flex:1.1;
+  flex:1.5;
 
   background:white;
 
@@ -310,7 +304,7 @@ body{
 
 /* GRAPH AREA */
 .graph-placeholder{
-  height:360px;
+  height:500px;
 
   border:2px dashed #d9dde6;
 

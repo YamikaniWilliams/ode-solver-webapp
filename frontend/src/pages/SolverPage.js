@@ -3,42 +3,56 @@ import "./SolverPage.css";
 import Footer from "../components/Footer";
 import { Link } from "react-router-dom";
 import Plot from "react-plotly.js";
+import * as XLSX from "xlsx";
 
 function SolverPage() {
-  const [order, setOrder] = useState(2);
+  const [order, setOrder] = useState(1);
 
   const [equation, setEquation] = useState("");
 
-  const [x0, setX0] = useState(0);
-
-  const [xf, setXf] = useState(10);
-
-  const [stepSize, setStepSize] = useState(0.1);
+  const [x0, setX0] = useState("");
+  const [xf, setXf] = useState("");
+  const [stepSize, setStepSize] = useState("");
 
   const [method, setMethod] = useState("");
 
   const [initialConditions, setInitialConditions] = useState([
-    "",
-    "",
-  ]);
+  "1",
+]);
 
   const [solution, setSolution] = useState(null);
 
   const [loading, setLoading] = useState(false);
 
   const solveODE = async () => {
+
     if (!equation) {
       alert("Please enter the equation");
       return;
     }
 
-    if (!method) {
-      alert("Please select a numerical method");
+    if (x0 === "") {
+      alert("Please enter Initial x (x₀).");
+      return;
+    }
+
+    if (xf === "") {
+      alert("Please enter Final x (xf).");
+      return;
+    }
+
+    if (stepSize === "") {
+      alert("Please enter Step Size (h).");
       return;
     }
 
     if (Number(xf) <= Number(x0)) {
       alert("Final x must be greater than Initial x");
+      return;
+    }
+
+    if (!method) {
+      alert("Please select a numerical method");
       return;
     }
 
@@ -66,10 +80,12 @@ function SolverPage() {
 
       if (!response.ok) {
 
-        const errorText =
-          await response.text();
+        const errorData =
+          await response.json();
 
-        throw new Error(errorText);
+        throw new Error(
+          errorData.error
+        );
 
       }
 
@@ -89,6 +105,68 @@ function SolverPage() {
      finally {
       setLoading(false);
     }
+  };
+    const downloadExcel = () => {
+
+    if (!solution || !solution.x) {
+
+      alert("No solution available to download.");
+
+      return;
+
+    }
+
+    const rows = [];
+
+    if (
+      solution.euler &&
+      solution.heun &&
+      solution.rk4
+    ) {
+
+      solution.x.forEach((xValue, index) => {
+
+        rows.push({
+          ODE: equation,
+          "X Value": xValue,
+          "Solution (Euler)": solution.euler[index],
+          "Solution (Heun)": solution.heun[index],
+          "Solution (RK4)": solution.rk4[index]
+        });
+
+      });
+
+    } else {
+
+      solution.x.forEach((xValue, index) => {
+
+        rows.push({
+          ODE: equation,
+          "X Value": xValue,
+          [`Solution (${method})`]: solution.y[index]
+        });
+
+      });
+
+    }
+
+    const worksheet =
+      XLSX.utils.json_to_sheet(rows);
+
+    const workbook =
+      XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(
+      workbook,
+      worksheet,
+      "ODE Solution"
+    );
+
+    XLSX.writeFile(
+      workbook,
+      "ODE_Solution.xlsx"
+    );
+
   };
 
   return (
@@ -113,9 +191,6 @@ function SolverPage() {
           <a href="/">Contact Us</a>
         </div>
 
-        <div className="theme-toggle">
-          🌙
-        </div>
 
       </nav>
 
@@ -202,6 +277,7 @@ function SolverPage() {
                 <input
                   type="number"
                   value={x0}
+                  placeholder="0"
                   onChange={(e) =>
                     setX0(e.target.value)
                   }
@@ -218,6 +294,7 @@ function SolverPage() {
                 <input
                   type="number"
                   value={xf}
+                  placeholder="1"
                   onChange={(e) =>
                     setXf(e.target.value)
                   }
@@ -279,6 +356,7 @@ function SolverPage() {
                 type="number"
                 step="0.01"
                 value={stepSize}
+                placeholder="0.1"
                 onChange={(e) =>
                   setStepSize(e.target.value)
                 }
@@ -334,18 +412,21 @@ function SolverPage() {
                 className="clear-btn"
                 onClick={() => {
 
+                  setOrder(1);
+
                   setEquation("");
-                  setSolution(null);
 
                   setMethod("");
 
-                  setX0(0);
-                  setXf(10);
-                  setStepSize(0.1);
+                  setX0("");
 
-                  setInitialConditions(
-                    Array(order).fill("")
-                  );
+                  setXf("");
+
+                  setStepSize("");
+
+                  setInitialConditions([""]);
+
+                  setSolution(null);
 
                 }}
               >
@@ -375,7 +456,10 @@ function SolverPage() {
 
             </div>
 
-            <button className="download-btn">
+            <button
+              className="download-btn"
+              onClick={downloadExcel}
+            >
               Download
             </button>
 
@@ -400,7 +484,7 @@ function SolverPage() {
                               x: solution.x,
                               y: solution.euler,
                               type: "scatter",
-                              mode: "lines",
+                              mode: "lines+markers",
                               name: "Euler"
                             },
 
@@ -408,7 +492,7 @@ function SolverPage() {
                               x: solution.x,
                               y: solution.heun,
                               type: "scatter",
-                              mode: "lines",
+                              mode: "lines+markers",
                               name: "Heun"
                             },
 
@@ -416,7 +500,7 @@ function SolverPage() {
                               x: solution.x,
                               y: solution.rk4,
                               type: "scatter",
-                              mode: "lines",
+                              mode: "lines+markers",
                               name: "RK4"
                             }
 
@@ -428,7 +512,7 @@ function SolverPage() {
                               x: solution.x,
                               y: solution.y,
                               type: "scatter",
-                              mode: "lines",
+                              mode: "lines+markers",
                               name: method
                             }
 
@@ -439,16 +523,35 @@ function SolverPage() {
                         text: `${method} Solution of y${"'".repeat(order)} = ${equation}`
                       },
 
+                      margin: {
+                        l: 80,
+                        r: 40,
+                        t: 60,
+                        b: 80
+                      },
+
                       xaxis: {
                         title: {
                           text: "Independent Variable (x)"
-                        }
+                        },
+                        showgrid: true,
+                        showline: true,
+                        linewidth: 2,
+                        mirror: true
                       },
 
                       yaxis: {
                         title: {
                           text: "Solution y(x)"
-                        }
+                        },
+                        showgrid: true,
+                        showline: true,
+                        linewidth: 2,
+                        mirror: true
+                      },
+
+                      legend: {
+                        orientation: "v"
                       }
                     }}
                     style={{
