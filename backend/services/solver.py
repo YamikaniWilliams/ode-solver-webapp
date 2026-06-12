@@ -9,9 +9,7 @@ from rk4 import rk4_step
 
 try:
 
-    # -----------------------------
-    # Read JSON from Node.js
-    # -----------------------------
+    
 
     payload = json.loads(
         sys.stdin.read()
@@ -49,9 +47,7 @@ try:
 
     method = payload["method"]
 
-    # -----------------------------
-# Validate Initial Conditions
-# -----------------------------
+    
 
     for i, value in enumerate(
         payload["initialConditions"]
@@ -78,9 +74,7 @@ try:
         for v in payload["initialConditions"]
     ]
 
-    # -----------------------------
-    # Detect highest derivative
-    # -----------------------------
+    
 
     highest_derivative = 0
 
@@ -110,18 +104,13 @@ try:
             f"{highest_derivative}."
         )
 
-    # -----------------------------
-    # Build RHS Function
-    # -----------------------------
+    
 
     rhs = build_function(
         equation
     )
 
-    # -----------------------------
-    # Convert nth-order ODE
-    # into first-order system
-    # -----------------------------
+    
 
     def F(x, u):
 
@@ -139,9 +128,7 @@ try:
 
         return result
 
-    # ==================================================
-    # ALL METHODS MODE
-    # ==================================================
+
 
     if method == "ALL":
 
@@ -207,9 +194,7 @@ try:
             )
         )
 
-    # ==================================================
-    # SINGLE METHOD MODE
-    # ==================================================
+    
 
     else:
 

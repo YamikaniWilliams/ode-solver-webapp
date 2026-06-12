@@ -7,10 +7,10 @@ function Footer() {
 
     <footer className="footer">
 
-      {/* TOP SECTION */}
+     
       <div className="footer-top">
 
-        {/* LEFT */}
+       
         <div className="footer-brand">
 
           <div className="footer-logo">
@@ -33,7 +33,7 @@ function Footer() {
 
         </div>
 
-        {/* RESOURCES */}
+        
         <div className="footer-column">
 
           <h4>
@@ -54,7 +54,7 @@ function Footer() {
 
         </div>
 
-        {/* CONTACT */}
+        
         <div className="footer-column">
 
           <h4>
@@ -67,7 +67,7 @@ function Footer() {
 
         </div>
 
-        {/* META */}
+        
         <div className="footer-column">
 
           <h4>
@@ -86,10 +86,10 @@ function Footer() {
 
       </div>
 
-      {/* LINE */}
+      
       <div className="footer-line"></div>
 
-      {/* BOTTOM */}
+      
       <div className="footer-bottom">
 
         <p>

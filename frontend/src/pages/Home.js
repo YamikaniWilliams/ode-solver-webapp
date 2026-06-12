@@ -50,7 +50,7 @@ function Home() {
   return (
     <div className="app">
       
-      {/* NAVBAR */}
+
       <nav className="navbar">
         <Link to="/" className="logo-section">
         <div className="logo-box">
@@ -71,10 +71,10 @@ function Home() {
 
       </nav>
 
-      {/* HERO SECTION */}
+
       <section className="hero">
 
-        {/* LEFT CONTENT */}
+
         <div className="hero-left">
 
           <h1 className="hero-title">
@@ -100,7 +100,7 @@ function Home() {
 
         </div>
 
-        {/* RIGHT CONTENT */}
+
         <div className="hero-right">
 
           <div
@@ -109,14 +109,14 @@ function Home() {
   onMouseLeave={() => setPaused(false)}
 >
 
-  {/* TITLE OVERLAY */}
+
   <div className="graph-title">
 
     {graphs[currentGraph].title}
 
   </div>
 
-  {/* GRAPH IMAGE */}
+
   <img
     src={graphs[currentGraph].image}
     alt="ODE Graph"

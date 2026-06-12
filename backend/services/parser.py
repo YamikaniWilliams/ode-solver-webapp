@@ -1,3 +1,5 @@
+import re
+
 from sympy import symbols
 from sympy.parsing.sympy_parser import (
     parse_expr,
@@ -7,24 +9,22 @@ from sympy.parsing.sympy_parser import (
 
 def build_function(expression):
 
-    # -----------------------------------
-    # Convert derivative notation
-    # -----------------------------------
 
     expression = expression.replace("y''''", "y4")
     expression = expression.replace("y'''", "y3")
     expression = expression.replace("y''", "y2")
     expression = expression.replace("y'", "y1")
 
-    # -----------------------------------
-    # Convert powers
-    # -----------------------------------
 
     expression = expression.replace("^", "**")
 
-    # -----------------------------------
-    # Define symbols
-    # -----------------------------------
+
+    expression = re.sub(
+        r'([a-zA-Z0-9])(?=(sin|cos|tan|exp|log|sqrt)\()',
+        r'\1*',
+        expression
+    )
+
 
     x = symbols("x")
 
@@ -40,6 +40,8 @@ def build_function(expression):
             implicit_multiplication_application,
         )
     )
+
+
 
     try:
 
@@ -62,9 +64,6 @@ def build_function(expression):
             f"Invalid mathematical expression: '{expression}'"
         )
 
-    # -----------------------------------
-    # Numerical evaluator
-    # -----------------------------------
 
     def f(x_value, state):
 

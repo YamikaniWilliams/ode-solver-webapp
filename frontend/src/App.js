@@ -10,10 +10,10 @@ function App() {
 
       <Routes>
 
-        {/* HOME PAGE */}
+        
         <Route path="/" element={<Home />} />
 
-        {/* SOLVER PAGE */}
+        
         <Route path="/solver" element={<SolverPage />} />
 
       </Routes>

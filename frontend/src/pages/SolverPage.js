@@ -90,6 +90,9 @@ function SolverPage() {
     }
 
     try {
+
+      setSolution(null);
+
       setLoading(true);
 
       const response = await fetch(
@@ -139,6 +142,84 @@ function SolverPage() {
       setLoading(false);
     }
   };
+   
+  function formatEquationPreview(expr) {
+
+  let formatted = expr;
+
+  formatted = formatted
+    .replace(/pi/g, "\\pi")
+    .replace(/sin\(/g, "\\sin(")
+    .replace(/cos\(/g, "\\cos(")
+    .replace(/tan\(/g, "\\tan(")
+    .replace(/log\(/g, "\\log(");
+
+  formatted = formatted.replace(
+    /sqrt\(([^()]*)\)/g,
+    "\\sqrt{$1}"
+  );
+
+  while (formatted.includes("exp(")) {
+
+    const start = formatted.indexOf("exp(");
+
+    let depth = 0;
+
+    let end = -1;
+
+    for (
+      let i = start + 4;
+      i < formatted.length;
+      i++
+    ) {
+
+      if (formatted[i] === "(") {
+        depth++;
+      }
+
+      else if (formatted[i] === ")") {
+
+        if (depth === 0) {
+
+          end = i;
+
+          break;
+
+        }
+
+        depth--;
+
+      }
+
+    }
+
+    if (end === -1) {
+      break;
+    }
+
+    const inside = formatted.slice(
+      start + 4,
+      end
+    );
+
+    formatted =
+      formatted.slice(0, start)
+      +
+      `e^{${inside}}`
+      +
+      formatted.slice(end + 1);
+
+  }
+
+  return formatted;
+
+}
+
+const previewEquation =
+  formatEquationPreview(
+    equation
+  );
+
     const downloadExcel = () => {
 
     if (!solution || !solution.x) {
@@ -205,7 +286,7 @@ function SolverPage() {
   return (
     <div className="solver-page">
 
-      {/* NAVBAR */}
+      
       <nav className="navbar">
 
         <Link to="/" className="logo-section">
@@ -227,7 +308,7 @@ function SolverPage() {
 
       </nav>
 
-      {/* HEADER */}
+  
       <div className="solver-header">
 
         <h1>ODE Numerical Engine</h1>
@@ -240,10 +321,10 @@ function SolverPage() {
 
       </div>
 
-      {/* MAIN PANELS */}
+      
       <div className="panels-container">
 
-        {/* LEFT PANEL */}
+        
         <div className="left-panel">
 
           <div className="panel-top">
@@ -258,7 +339,7 @@ function SolverPage() {
 
           <div className="panel-content">
 
-            {/* ORDER */}
+            
             <div className="input-group">
 
               <label>Order (n):</label>
@@ -280,7 +361,7 @@ function SolverPage() {
 
             </div>
 
-            {/* EQUATION */}
+            
             <div className="input-group full-width">
 
               <label>
@@ -309,7 +390,7 @@ function SolverPage() {
                   <div className="equation-preview">
 
                     <InlineMath
-                      math={`y${"'".repeat(order)}=${equation}`}
+                      math={`y${"'".repeat(order)}=${previewEquation}`}
                     />
 
                   </div>
@@ -319,7 +400,7 @@ function SolverPage() {
 
             </div>
 
-            {/* ROW 1 */}
+            
             <div className="row">
 
               <div className="input-group">
@@ -358,7 +439,7 @@ function SolverPage() {
 
             </div>
 
-            {/* INITIAL CONDITIONS */}
+          
             <div className="input-group full-width">
 
               <label>
@@ -399,7 +480,7 @@ function SolverPage() {
 
             </div>
 
-            {/* STEP SIZE */}
+           
             <div className="input-group">
 
               <label>
@@ -418,7 +499,7 @@ function SolverPage() {
 
             </div>
 
-            {/* METHOD */}
+            
             <div className="input-group">
 
               <select
@@ -452,7 +533,7 @@ function SolverPage() {
 
             </div>
 
-            {/* BUTTONS */}
+            
             <div className="button-row">
 
               <button
@@ -493,7 +574,7 @@ function SolverPage() {
 
         </div>
 
-        {/* RIGHT PANEL */}
+    
         <div className="right-panel">
 
           <div className="solution-header">
@@ -525,12 +606,13 @@ function SolverPage() {
 
           <div className="solution-content">
 
-            {/* GRAPH */}
+            
             <div className="graph-placeholder">
 
               {solution && solution.x ? (
 
                 <>
+                
 
                   <Plot
                     data={
@@ -542,7 +624,7 @@ function SolverPage() {
                               x: solution.x,
                               y: solution.euler,
                               type: "scatter",
-                              mode: "lines+markers",
+                              mode: "lines",
                               name: "Euler"
                             },
 
@@ -550,7 +632,7 @@ function SolverPage() {
                               x: solution.x,
                               y: solution.heun,
                               type: "scatter",
-                              mode: "lines+markers",
+                              mode: "lines",
                               name: "Heun"
                             },
 
@@ -558,7 +640,7 @@ function SolverPage() {
                               x: solution.x,
                               y: solution.rk4,
                               type: "scatter",
-                              mode: "lines+markers",
+                              mode: "lines",
                               name: "RK4"
                             }
 
@@ -570,15 +652,20 @@ function SolverPage() {
                               x: solution.x,
                               y: solution.y,
                               type: "scatter",
-                              mode: "lines+markers",
+                              mode: "lines",
                               name: method
                             }
 
                           ]
                     }
                     layout={{
-                      title: {
-                        text: `${method} Solution of y${"'".repeat(order)} = ${equation}`
+                     title: {
+                        text:
+                          `${method} Numerical Solution of y${"'".repeat(order)} = ${equation}`,
+                        x: 0.5,
+                        font: {
+                          size: 22
+                        }
                       },
 
                       margin: {
@@ -629,7 +716,7 @@ function SolverPage() {
 
             </div>
 
-            {/* RESULTS */}
+            
             <div
               className="table-placeholder"
               style={{
