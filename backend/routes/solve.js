@@ -6,7 +6,9 @@ const { spawn } = require("child_process");
 router.post("/", (req, res) => {
 
   const python = spawn(
-    "python",
+    process.platform === "win32"
+      ? "python"
+      : "python3",
     ["./services/solver.py"]
   );
 

@@ -11,9 +11,13 @@ import { InlineMath } from "react-katex";
 import "katex/dist/katex.min.css";
 
 function SolverPage() {
+  const API_URL =
+  process.env.REACT_APP_API_URL ||
+  "http://localhost:5000";
   const [order, setOrder] = useState(1);
 
   const [equation, setEquation] = useState("");
+  const [showFunctionsHelp, setShowFunctionsHelp] = useState(false);
   const [equationFocused, setEquationFocused] = useState(false);
 
   const [x0, setX0] = useState("");
@@ -96,7 +100,7 @@ function SolverPage() {
       setLoading(true);
 
       const response = await fetch(
-        "http://localhost:5000/api/solve",
+       `${API_URL}/api/solve`,
         {
           method: "POST",
           headers: {
@@ -299,11 +303,7 @@ const previewEquation =
           </h2>
         </Link>
 
-        <div className="nav-links">
-          <a href="/">Examples</a>
-          <a href="/">Documentation</a>
-          <a href="/">Contact Us</a>
-        </div>
+      
 
 
       </nav>
@@ -332,7 +332,8 @@ const previewEquation =
               <h3>System Parameters</h3>
 
               <p>
-                Differential Equation: y(n) = f(x, y, y', ...)
+                Differential Equation:&nbsp;
+                <InlineMath math={"y^{(n)} = f(x,y,y',y'',\\ldots,y^{(n-1)})"} />
               </p>
             </div>
           </div>
@@ -365,12 +366,15 @@ const previewEquation =
             <div className="input-group full-width">
 
               <label>
-                Highest Derivative Function
+                Function ({" "}
+                <InlineMath
+                  math={"f(x,y,y',y'',\\ldots,y^{(n-1)})"}
+                />):
               </label>
 
               <input
                 type="text"
-                placeholder="y'-5xy"
+                placeholder="y'' + y' - x"
                 value={equation}
                 onChange={(e) =>
                   setEquation(e.target.value)
@@ -382,6 +386,77 @@ const previewEquation =
                   setEquationFocused(false)
                 }
               />
+
+              <button
+                type="button"
+                className="functions-help-btn"
+                onClick={() =>
+                  setShowFunctionsHelp(
+                    !showFunctionsHelp
+                  )
+                }
+              >
+                {showFunctionsHelp
+                  ? "▼ Hide Supported Functions"
+                  : "▶ Show Supported Functions"}
+              </button>
+              {showFunctionsHelp && (
+
+                <div className="functions-help">
+
+                  <table>
+
+                    <thead>
+                      <tr>
+                        <th>Function</th>
+                        <th>Enter As</th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+
+                      <tr>
+                        <td>Sine</td>
+                        <td>sin(x)</td>
+                      </tr>
+
+                      <tr>
+                        <td>Cosine</td>
+                        <td>cos(x)</td>
+                      </tr>
+
+                      <tr>
+                        <td>Tangent</td>
+                        <td>tan(x)</td>
+                      </tr>
+
+                      <tr>
+                        <td>Square Root</td>
+                        <td>sqrt(x)</td>
+                      </tr>
+
+                      <tr>
+                        <td>Exponential</td>
+                        <td>exp(x)</td>
+                      </tr>
+
+                      <tr>
+                        <td>Natural Log</td>
+                        <td>log(x)</td>
+                      </tr>
+
+                      <tr>
+                        <td>Pi</td>
+                        <td>pi</td>
+                      </tr>
+
+                    </tbody>
+
+                  </table>
+
+                </div>
+
+              )}
 
 
               {
@@ -406,7 +481,7 @@ const previewEquation =
               <div className="input-group">
 
                 <label>
-                  Initial x (x₀)
+                  Initial x:
                 </label>
 
                 <input
@@ -423,7 +498,7 @@ const previewEquation =
               <div className="input-group">
 
                 <label>
-                  Final x (xf)
+                  Final x:
                 </label>
 
                 <input
@@ -443,7 +518,7 @@ const previewEquation =
             <div className="input-group full-width">
 
               <label>
-                Initial Conditions
+                Initial Conditions:
               </label>
 
               {initialConditions.map(
@@ -484,7 +559,7 @@ const previewEquation =
             <div className="input-group">
 
               <label>
-                Step Size (h)
+                Step Size (h):
               </label>
 
               <input
@@ -503,6 +578,7 @@ const previewEquation =
             <div className="input-group">
 
               <select
+                className="method-select"
                 value={method}
                 onChange={(e) =>
                   setMethod(e.target.value)
@@ -595,12 +671,16 @@ const previewEquation =
 
             </div>
 
-            <button
-              className="download-btn"
-              onClick={downloadExcel}
-            >
-              Download
-            </button>
+            {solution && (
+
+              <button
+                className="download-btn"
+                onClick={downloadExcel}
+              >
+                Download
+              </button>
+
+            )}
 
           </div>
 
@@ -664,15 +744,33 @@ const previewEquation =
                           `${method} Numerical Solution of y${"'".repeat(order)} = ${equation}`,
                         x: 0.5,
                         font: {
-                          size: 22
+                          size:
+                            window.innerWidth < 768
+                              ? 14
+                              : 22
                         }
                       },
 
                       margin: {
-                        l: 80,
-                        r: 40,
-                        t: 60,
-                        b: 80
+                        l:
+                          window.innerWidth < 768
+                            ? 50
+                            : 80,
+
+                        r:
+                          window.innerWidth < 768
+                            ? 10
+                            : 40,
+
+                        t:
+                          window.innerWidth < 768
+                            ? 50
+                            : 60,
+
+                        b:
+                          window.innerWidth < 768
+                            ? 80
+                            : 80
                       },
 
                       xaxis: {
@@ -696,14 +794,32 @@ const previewEquation =
                       },
 
                       legend: {
-                        orientation: "v"
+                        orientation:
+                          window.innerWidth < 768
+                            ? "h"
+                            : "v",
+
+                        x: 0.5,
+
+                        xanchor: "center",
+
+                        y:
+                          window.innerWidth < 768
+                            ? -0.25
+                            : 1
                       }
                     }}
                     style={{
                       width: "100%",
-                      height: "450px"
+                      height: window.innerWidth < 768
+                        ? "350px"
+                        : "450px"
                     }}
                     useResizeHandler={true}
+                    config={{
+                      responsive: true,
+                      displaylogo: false
+                    }}
                   />
 
                 </>
@@ -731,6 +847,7 @@ const previewEquation =
                 </div>
               )  : solution && solution.x ? (
 
+              <div className="table-container">
                 <table className="solution-table">
 
                   <thead>
@@ -836,6 +953,7 @@ const previewEquation =
                   </tbody>
 
                 </table>
+                </div>
 
               ) : (
 

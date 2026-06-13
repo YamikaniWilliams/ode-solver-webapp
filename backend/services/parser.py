@@ -1,22 +1,46 @@
 import re
 
-from sympy import symbols
+from sympy import (
+    symbols,
+    lambdify
+)
+
 from sympy.parsing.sympy_parser import (
     parse_expr,
     standard_transformations,
     implicit_multiplication_application
 )
 
+
 def build_function(expression):
 
+    expression = expression.replace(
+        "y''''",
+        "y4"
+    )
 
-    expression = expression.replace("y''''", "y4")
-    expression = expression.replace("y'''", "y3")
-    expression = expression.replace("y''", "y2")
-    expression = expression.replace("y'", "y1")
+    expression = expression.replace(
+        "y'''",
+        "y3"
+    )
+
+    expression = expression.replace(
+        "y''",
+        "y2"
+    )
+
+    expression = expression.replace(
+        "y'",
+        "y1"
+    )
 
 
-    expression = expression.replace("^", "**")
+
+    expression = expression.replace(
+        "^",
+        "**"
+    )
+
 
 
     expression = re.sub(
@@ -24,6 +48,7 @@ def build_function(expression):
         r'\1*',
         expression
     )
+
 
 
     x = symbols("x")
@@ -58,6 +83,21 @@ def build_function(expression):
             }
         )
 
+    
+
+        numeric_function = lambdify(
+            (
+                x,
+                y,
+                y1,
+                y2,
+                y3,
+                y4
+            ),
+            expr,
+            "math"
+        )
+
     except Exception:
 
         raise Exception(
@@ -67,30 +107,18 @@ def build_function(expression):
 
     def f(x_value, state):
 
-        substitutions = {
-            x: x_value,
-            y: state[0]
-        }
-
-        if len(state) > 1:
-            substitutions[y1] = state[1]
-
-        if len(state) > 2:
-            substitutions[y2] = state[2]
-
-        if len(state) > 3:
-            substitutions[y3] = state[3]
-
-        if len(state) > 4:
-            substitutions[y4] = state[4]
-
         try:
 
-            value = expr.evalf(
-                subs=substitutions
+            return float(
+                numeric_function(
+                    x_value,
+                    state[0] if len(state) > 0 else 0,
+                    state[1] if len(state) > 1 else 0,
+                    state[2] if len(state) > 2 else 0,
+                    state[3] if len(state) > 3 else 0,
+                    state[4] if len(state) > 4 else 0
+                )
             )
-
-            return float(value)
 
         except Exception:
 

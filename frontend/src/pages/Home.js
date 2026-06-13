@@ -63,12 +63,6 @@ function Home() {
 
         </Link>
 
-        <div className="nav-links">
-          <a href="/">Examples</a>
-          <a href="/">Documentation</a>
-          <a href="/">Contact Us</a>
-        </div>
-
       </nav>
 
 

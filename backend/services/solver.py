@@ -9,8 +9,6 @@ from rk4 import rk4_step
 
 try:
 
-    
-
     payload = json.loads(
         sys.stdin.read()
     )
@@ -47,7 +45,9 @@ try:
 
     method = payload["method"]
 
-    
+    # ----------------------------------
+    # Validate Initial Conditions
+    # ----------------------------------
 
     for i, value in enumerate(
         payload["initialConditions"]
@@ -74,7 +74,9 @@ try:
         for v in payload["initialConditions"]
     ]
 
-    
+    # ----------------------------------
+    # Detect Highest Derivative Used
+    # ----------------------------------
 
     highest_derivative = 0
 
@@ -90,6 +92,10 @@ try:
     elif "y'" in equation:
         highest_derivative = 1
 
+    # ----------------------------------
+    # User selected too small an order
+    # ----------------------------------
+
     if highest_derivative > order:
 
         derivative_name = (
@@ -97,20 +103,45 @@ try:
         )
 
         raise Exception(
-            f"You selected Order = {order}, "
-            f"but the equation contains "
-            f"{derivative_name}. "
-            f"Increase the order to at least "
-            f"{highest_derivative}."
+            "The selected ODE order is inconsistent with "
+            "the equation entered. Please check that you "
+            "have chosen the correct order for your "
+            "differential equation."
         )
 
-    
+    # ----------------------------------
+    # Highest derivative must NOT
+    # appear in the RHS expression
+    # ----------------------------------
+
+    highest_derivative_symbol = {
+        1: "y'",
+        2: "y''",
+        3: "y'''",
+        4: "y''''"
+    }.get(order)
+
+    if highest_derivative_symbol in equation:
+
+        raise Exception(
+            "The selected ODE order is inconsistent with "
+            "the equation entered. Please check that you "
+            "have chosen the correct order for your "
+            "differential equation."
+        )
+
+    # ----------------------------------
+    # Build RHS Function
+    # ----------------------------------
 
     rhs = build_function(
         equation
     )
 
-    
+    # ----------------------------------
+    # Convert nth-order ODE
+    # into first-order system
+    # ----------------------------------
 
     def F(x, u):
 
@@ -128,7 +159,9 @@ try:
 
         return result
 
-
+    # ==================================
+    # ALL METHODS MODE
+    # ==================================
 
     if method == "ALL":
 
@@ -194,7 +227,9 @@ try:
             )
         )
 
-    
+    # ==================================
+    # SINGLE METHOD MODE
+    # ==================================
 
     else:
 
