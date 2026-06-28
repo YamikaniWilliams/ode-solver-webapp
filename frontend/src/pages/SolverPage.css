@@ -578,16 +578,47 @@ body{
 
   }
 
-  .clear-btn{
+    .table-container{
+
+    overflow-x:visible;
+
+}
+
+.solution-table{
+
     width:100%;
-    height:60px;
-  }
 
-    .solution-table{
+    min-width:unset;
 
-    min-width:600px;
+    table-layout:auto;
 
-  }
+    font-size:13px;
+
+}
+
+.solution-table thead th{
+
+    padding:10px 4px;
+
+    font-size:14px;
+
+    white-space:nowrap;
+
+}
+
+.solution-table td{
+
+    padding:8px 4px;
+
+    font-size:13px;
+
+    white-space:nowrap;
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
+
+}
 
   .compute-btn{
 
@@ -601,6 +632,16 @@ body{
 
   }
 
+.graph-placeholder{
+
+    height:340px;
+
+}
+.solution-content{
+
+    padding:12px;
+
+}
   .clear-btn{
 
     width:100%;

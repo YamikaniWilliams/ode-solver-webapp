@@ -739,45 +739,42 @@ const previewEquation =
                           ]
                     }
                     layout={{
-                     title: {
-                        text:
-                          `${method} Numerical Solution of y${"'".repeat(order)} = ${equation}`,
+                      autosize: true,
+
+                      title: {
+                        text: `${method} Numerical Solution`,
                         x: 0.5,
+                        xanchor: "center",
                         font: {
-                          size:
-                            window.innerWidth < 768
-                              ? 14
-                              : 22
+                          size: window.innerWidth < 768 ? 16 : 22,
+                          family: "Poppins"
                         }
                       },
 
+                      paper_bgcolor: "white",
+                      plot_bgcolor: "white",
+
                       margin: {
-                        l:
-                          window.innerWidth < 768
-                            ? 50
-                            : 80,
-
-                        r:
-                          window.innerWidth < 768
-                            ? 10
-                            : 40,
-
-                        t:
-                          window.innerWidth < 768
-                            ? 50
-                            : 60,
-
-                        b:
-                          window.innerWidth < 768
-                            ? 80
-                            : 80
+                        l: window.innerWidth < 768 ? 50 : 70,
+                        r: window.innerWidth < 768 ? 15 : 30,
+                        t: window.innerWidth < 768 ? 45 : 60,
+                        b: window.innerWidth < 768 ? 55 : 70
                       },
 
                       xaxis: {
                         title: {
-                          text: "Independent Variable (x)"
+                          text: "x",
+                          font: {
+                            size: window.innerWidth < 768 ? 13 : 16
+                          }
                         },
+
+                        tickfont: {
+                          size: window.innerWidth < 768 ? 11 : 14
+                        },
+
                         showgrid: true,
+                        zeroline: false,
                         showline: true,
                         linewidth: 2,
                         mirror: true
@@ -785,40 +782,55 @@ const previewEquation =
 
                       yaxis: {
                         title: {
-                          text: "Solution y(x)"
+                          text: "y(x)",
+                          font: {
+                            size: window.innerWidth < 768 ? 13 : 16
+                          }
                         },
+
+                        tickfont: {
+                          size: window.innerWidth < 768 ? 11 : 14
+                        },
+
                         showgrid: true,
+                        zeroline: false,
                         showline: true,
                         linewidth: 2,
                         mirror: true
                       },
 
                       legend: {
-                        orientation:
-                          window.innerWidth < 768
-                            ? "h"
-                            : "v",
-
+                        orientation: "h",
                         x: 0.5,
-
                         xanchor: "center",
-
-                        y:
-                          window.innerWidth < 768
-                            ? -0.25
-                            : 1
+                        y: -0.18,
+                        font: {
+                          size: window.innerWidth < 768 ? 11 : 13
+                        }
                       }
                     }}
                     style={{
                       width: "100%",
                       height: window.innerWidth < 768
-                        ? "350px"
-                        : "450px"
+                        ? "300px"
+                        : "460px"
                     }}
                     useResizeHandler={true}
                     config={{
                       responsive: true,
-                      displaylogo: false
+                      displaylogo: false,
+
+                      modeBarButtonsToRemove: [
+                        "lasso2d",
+                        "select2d",
+                        "zoomIn2d",
+                        "zoomOut2d",
+                        "toggleSpikelines",
+                        "hoverCompareCartesian",
+                        "hoverClosestCartesian"
+                      ],
+
+                      displayModeBar: true
                     }}
                   />
 
