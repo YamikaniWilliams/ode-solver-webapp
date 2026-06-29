@@ -77,7 +77,11 @@ function Footer() {
             Project Metadata
           </h4>
 
-          <a href="/">
+          <a
+            href="https://github.com/YamikaniWilliams/ode-solver-webapp/blob/main/LICENSE"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             MIT License
           </a>
 
