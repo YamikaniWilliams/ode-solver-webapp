@@ -151,13 +151,9 @@ ode-solver/
 
 Planned enhancements include:
 
-- Support for higher-order differential equations.
 - Systems of ordinary differential equations.
-- Adaptive step-size numerical methods.
 - Analytical (exact) solution support.
 - Error analysis and convergence comparison.
-- PDF report generation.
-- Additional visualization options.
 - Dark mode.
 
 ---
