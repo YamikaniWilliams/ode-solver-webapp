@@ -1,5 +1,6 @@
 import React from "react";
 import "./Footer.css";
+import { Link } from "react-router-dom";
 
 function Footer() {
 
@@ -40,9 +41,9 @@ function Footer() {
             Resources
           </h4>
 
-          <a href="/">
+          <Link to="/solver">
             Interactive Solver
-          </a>
+          </Link>
 
           <a href="/">
             Documentation
@@ -77,13 +78,9 @@ function Footer() {
             Project Metadata
           </h4>
 
-          <a
-            href="https://github.com/YamikaniWilliams/ode-solver-webapp/blob/main/LICENSE"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            MIT License
-          </a>
+          <Link to="/license">
+            License & Copyright
+          </Link>
 
           <a
             href="mailto:odesolverapp@gmail.com?subject=Bug%20Report&body=Please%20describe%20the%20bug%20you%20encountered.%0A%0ADevice:%20%0ABrowser:%20%0ASteps%20to%20reproduce:%20%0A%0AExpected%20behavior:%20%0AActual%20behavior:%20"
