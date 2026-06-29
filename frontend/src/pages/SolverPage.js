@@ -746,7 +746,7 @@ const previewEquation =
                         x: 0.5,
                         xanchor: "center",
                         font: {
-                          size: window.innerWidth < 768 ? 16 : 22,
+                          size: window.innerWidth < 768 ? 14 : 22,
                           family: "Poppins"
                         }
                       },
@@ -755,10 +755,11 @@ const previewEquation =
                       plot_bgcolor: "white",
 
                       margin: {
-                        l: window.innerWidth < 768 ? 50 : 70,
-                        r: window.innerWidth < 768 ? 15 : 30,
-                        t: window.innerWidth < 768 ? 45 : 60,
-                        b: window.innerWidth < 768 ? 55 : 70
+                        l: window.innerWidth < 768 ? 35 : 60,
+                        r: window.innerWidth < 768 ? 10 : 20,
+                        t: window.innerWidth < 768 ? 28 : 45,
+                        b: window.innerWidth < 768 ? 70 : 60,
+                        pad: 0
                       },
 
                       xaxis: {
@@ -803,17 +804,18 @@ const previewEquation =
                         orientation: "h",
                         x: 0.5,
                         xanchor: "center",
-                        y: -0.18,
+                        y: -0.30,
+                        yanchor: "top",
                         font: {
-                          size: window.innerWidth < 768 ? 11 : 13
+                          size: window.innerWidth < 768 ? 10 : 13
                         }
                       }
                     }}
                     style={{
                       width: "100%",
                       height: window.innerWidth < 768
-                        ? "300px"
-                        : "460px"
+                        ? "360px"
+                        : "500px"
                     }}
                     useResizeHandler={true}
                     config={{

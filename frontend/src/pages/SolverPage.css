@@ -633,9 +633,11 @@ body{
   }
 
 .graph-placeholder{
-
-    height:340px;
-
+    height:380px;
+    padding:0;
+    border:2px dashed #d9dde6;
+    border-radius:22px;
+    overflow:hidden;
 }
 .solution-content{
 
