@@ -61,7 +61,10 @@ function Footer() {
             Contact Us
           </h4>
 
-          <a href="/">
+          <a
+            href="mailto:odesolverapp@gmail.com?subject=General%20Inquiry"
+            className="footer-email"
+          >
             odesolverapp@gmail.com
           </a>
 
@@ -78,7 +81,10 @@ function Footer() {
             MIT License
           </a>
 
-          <a href="/">
+          <a
+            href="mailto:odesolverapp@gmail.com?subject=Bug%20Report&body=Please%20describe%20the%20bug%20you%20encountered.%0A%0ADevice:%20%0ABrowser:%20%0ASteps%20to%20reproduce:%20%0A%0AExpected%20behavior:%20%0AActual%20behavior:%20"
+            className="footer-link"
+          >
             Report a Bug
           </a>
 
